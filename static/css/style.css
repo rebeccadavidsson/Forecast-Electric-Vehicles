@@ -94,7 +94,7 @@ body {
     display: table-cell;
     vertical-align: middle;
     border-radius: 50%; /* may require vendor prefixes */
-    background: gold;
+    background: lightblue;
     font-weight: 800;
     align-items: center;
     border-radius: 100%;

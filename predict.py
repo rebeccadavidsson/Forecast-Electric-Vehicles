@@ -72,6 +72,30 @@ def prepare_dataset():
     # print(df.head(5))
     return df, total_rows, counted_df, mean_df
 
+def prepare_compact_dataset():
+
+    df = pd.read_csv("charge_sessions_sampled.csv")
+
+    # Convert timestamp
+    df['session_time'] = df['timestamp_end'] - df['timestamp_start']
+    df['timestamp_start'] = pd.to_datetime(df['timestamp_start'], unit='s')
+    df['timestamp_end'] = pd.to_datetime(df['timestamp_end'], unit='s')
+    df['week_day'] = df['timestamp_start'].dt.dayofweek 
+    df["session_time_hours"] = df["session_time"] / 3600
+    df = df.assign(Date=df.timestamp_start.dt.floor('H'))
+    df = df.assign(Day=df.timestamp_start.dt.floor('D'))
+    df["Hour"] = df.Date.dt.hour
+
+    # Exclude outliers
+    df = df[df['session_time_hours'] <  50]
+    df = df[df['session_time_hours'] > 0.01]
+    df = df[df["kwh_charged"] / df["session_time_hours"] < 50]
+    df = df[df['kwh_charged'] < 100] 
+    df = df[df['kwh_charged'] > 0] 
+
+    counted_df = df.groupby("Day").count()
+    return counted_df
+
 
 def plot(counted_df):
     plt.plot(counted_df.index, counted_df.session_time, alpha=0.8)

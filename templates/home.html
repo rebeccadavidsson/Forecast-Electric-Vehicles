@@ -140,26 +140,19 @@
                 </div>
                
 
-                <button type="submit" aria-label="submit form">
-                  <svg aria-hidden="true">
-                    <use xlink:href="#search"></use>
-                  </svg>
-                </button>
+
               </form>
-              <div class="admin-profile">
-                <div class="notifications">
-                  <span class="badge">1</span>
-                  <svg>
-                    <use xlink:href="#users"></use>
-                  </svg>
-                </div>
-              </div>
+              
             </section>
             <section class="grid">
-                <article id="main_plot">{{ plot|safe }}</article>
+            <article id="main_plot">
+                <h4 style="font-weight: 800;" class="inner_title">Future Predictions</h4>
+                {{ plot|safe }}
+            </article>
               <article style="max-width:400px;">
                   <div class="inner">
-                      <h4 class="inner_title">Number of EVs charging at {{ selected_time }}:</h4>
+                      <h4 style="font-weight: 800; padding-bottom: 0px;" class="inner_title" >Prediction</h4>
+                      <h4 class="inner_title" style="padding-top: 0.4em;">Number of EVs charging at {{ selected_time }}:</h4>
                       <div class="center">
                         <h1 class="inner_title dot">{{ number_of_EVs }}</h1>
                      </div>
@@ -197,10 +190,11 @@
                     {{ density_plot|safe }}
                 </div>
             </article>
-              <article></article>
-              <article></article>
-              <article></article>
-              <article></article>
+
+              <article>
+                <h5 style="font-weight: 800;" class="inner_title">Observed Data</h5>
+                {{ observed_plot|safe }}
+              </article>
             </section>
             <footer class="page-footer">
               <span>Made by: Abel, Daniel, Katinka, Rebecca</span>
