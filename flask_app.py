@@ -1,19 +1,15 @@
-from flask import Flask, jsonify, make_response, render_template, Markup
-from dash import Dash
+from flask import Flask, make_response, render_template, Markup
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from predict import run, prepare_compact_dataset
-import plotly
 import plotly.figure_factory as ff
 import plotly.express as px
-import plotly.graph_objs as go
-from bs4 import BeautifulSoup
 from plotly.offline import plot
 import pandas as pd
 import numpy as np
-
+import matplotlib.pylab as plt
 
 server = Flask(__name__)
 app = dash.Dash(
@@ -67,16 +63,16 @@ def update_graph_live(n):
     return graph
 
 
-def plot_density():
+def plot_density(hour=15):
 
     df = pd.read_pickle("densities.p")
 
-    df_section = df[df["Hour"] == 15]
+    df_section = df[df["Hour"] == hour]
 
     # fig = px.histogram(df_section, x="Means", histnorm='probability density')
     # fig.show()
     group_labels = ['distplot']
-    fig = ff.create_distplot([df_section["Means"].values], group_labels, bin_size=1000, curve_type="kde")
+    fig = ff.create_distplot([df_section["Means"].values], group_labels, bin_size=len(df_section) * 5, curve_type="kde")
     fig.update_layout(
         margin=dict(l=30, r=0, t=0, b=30),
         autosize=True,

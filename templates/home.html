@@ -30,34 +30,35 @@
               </button>
               <ul class="admin-menu">
                 <li class="menu-heading">
-                  <h3>EV overview</h3>
+                  <h3>Overview</h3>
                 </li>
                 <li>
-                  <a href="#0">
+                  <a href="#main_plot">
                     <svg>
-                      <use xlink:href="#pages"></use>
+                      <use xlink:href="#main_plot"></use>
                     </svg>
-                    <span>EVs</span>
+                    <span>Future Predictions</span>
                   </a>
                 </li>
                 <li>
-                  <a href="#0">
+                  <a href="#prob_dens">
                     <svg>
-                      <use xlink:href="#users"></use>
+                      <use xlink:href="#prob_dens"></use>
                     </svg>
-                    <span>2019</span>
+                    <span>Probability Densitity Plot</span>
                   </a>
                 </li>
                 <li>
-                  <a href="#0">
+                    
+                  <a href="#observed">
                     <svg>
-                      <use xlink:href="#trends"></use>
-                    </svg>
-                    <span>2020</span>
+                        <use xlink:href="#collection"></use>
+                      </svg>
+                    <span>Observed Data</span>
                   </a>
                 </li>
                 <li>
-                  <a href="#0">
+                  <a href="#observed">
                     <svg>
                       <use xlink:href="#collection"></use>
                     </svg>
@@ -185,13 +186,13 @@
                     <option value="22">10:00 pm</option>
                     <option value="23">11:00 pm</option>
                 </select>
-                <div class="inner">
+                <div class="inner" id="prob_dens">
                     <h4 class="inner_title">Probability curve of the charging session length at a given hour </h4>
                     {{ density_plot|safe }}
                 </div>
             </article>
 
-              <article>
+              <article id="observed">
                 <h5 style="font-weight: 800;" class="inner_title">Observed Data</h5>
                 {{ observed_plot|safe }}
               </article>
