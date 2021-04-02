@@ -9,7 +9,6 @@ import plotly.express as px
 from flask import jsonify
 import plotly.figure_factory as ff
 import statsmodels
-from statsmodels.tsa.arima.model import ARIMA
 from sklearn.metrics import mean_squared_error
 from math import sqrt
 import datetime
@@ -176,12 +175,13 @@ def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, pri
         new_date = last_date + datetime.timedelta(hours=t)
         new_dates.append(new_date)
 
-    forecast = model_fit.forecast(steps=future_steps)
+    # forecast = model_fit.forecast(steps=future_steps)
+    forecast = pd.read_pickle('./forecast.p')
 
     # invert the differenced forecast to something usable
     history = [x for x in X]
     day = 1
-    for yhat in forecast:
+    for yhat in forecast.values:
         inverted = inverse_difference(history, yhat, days_in_year)
         # print('Day %d: %f' % (day, inverted))
         history.append(inverted)
@@ -219,20 +219,21 @@ def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, pri
     return number_of_EVs.values[0], number_of_EVs_end.values[0]
     
 
-def run(timestamp_start, timestamp_end):
+def run(timestamp_start, timestamp_end, convert_corona=True):
     
     print("Predicting...")
     df, total_rows, counted_df, mean_df = prepare_dataset()
     y = counted_df["timestamp_start"]
     y_mean = mean_df["session_time"]
 
-
-    y, converted = convert_df_corona(counted_df)
-    y_mean, converted_mean = convert_df_corona(mean_df)
+    if convert_corona:
+        y, converted = convert_df_corona(counted_df)
+        y_mean, converted_mean = convert_df_corona(mean_df)
 
     factor = len(y) / total_rows
-    model_fit = fit_model(y, factor)
-    model_fit_mean = fit_model(y_mean, factor)
+    # model_fit = fit_model(y, factor)
+    # model_fit_mean = fit_model(y_mean, factor)
+    model_fit, model_fit_mean = [], []
 
     number_of_EVs, number_of_EVs_end = predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, plot=False)
     # number_of_EVs_, number_of_EVs_end_ = predict_future(y_mean, model_fit_mean, total_rows, timestamp_start, timestamp_end, plot=False)

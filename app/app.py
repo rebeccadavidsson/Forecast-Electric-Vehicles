@@ -9,7 +9,10 @@ from plotly.offline import plot
 import pandas as pd
 import numpy as np
 import matplotlib.pylab as plt
-from .predict import run, prepare_compact_dataset
+try:
+    from .predict import run, prepare_compact_dataset
+except ImportError:
+    from predict import run, prepare_compact_dataset
 
 START_DATE_TIME = pd.to_datetime('2021-02-01 14:00')
 
@@ -114,7 +117,7 @@ def observed_data():
 
 
 def main_plot():
-    section_df = pd.read_pickle("results.p")
+    section_df = pd.read_pickle("./results.p")
     graph = px.bar(x=section_df.index, y=section_df.Count)
     graph.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
                     marker_line_width=1.5, opacity=0.6)
