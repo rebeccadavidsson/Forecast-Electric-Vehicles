@@ -194,7 +194,7 @@ def forecast():
     return predict(timestamp_start=timestamp_start, timestamp_end=timestamp_end, forecast=True)
 
 def run_app(x, y):
-    server.run(debug=True, port=8080)
+    server.run(host='0.0.0.0')
 
 if __name__ == '__main__':
     server.run(debug=True, port=8080)
