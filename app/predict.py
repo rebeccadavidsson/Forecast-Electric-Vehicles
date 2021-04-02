@@ -165,20 +165,6 @@ def fit_model(y, factor):
     return model_fit
 
 
-def fit_testmodel(y, factor, df):
-    series = y * factor
-    # seasonal difference
-    X = series.values
-    differenced = difference(X, days_in_year)
-    # fit model
-
-    exogx = np.df["wind"].reshape(-1,1)
-
-    model = ARIMA(differenced,df, order=(5, 0, 1),exog=exogx )
-    model_fit = model.fit()
-    return model_fit
-
-
 def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, print_results=False, future_steps=3000, plot=False):
     future_steps = future_steps
     last_date = y.index[-1]

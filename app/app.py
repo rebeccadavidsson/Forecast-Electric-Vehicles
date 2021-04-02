@@ -3,14 +3,13 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-from predict import run, prepare_compact_dataset
 import plotly.figure_factory as ff
 import plotly.express as px
 from plotly.offline import plot
 import pandas as pd
 import numpy as np
 import matplotlib.pylab as plt
-
+from .predict import run, prepare_compact_dataset
 
 START_DATE_TIME = pd.to_datetime('2021-02-01 14:00')
 
@@ -21,7 +20,7 @@ app = dash.Dash(
     url_base_pathname='/dash/'
 )
 
-section_df = pd.read_pickle("results.p")
+section_df = pd.read_pickle("./results.p")
 graph = px.bar(x=section_df.index, y=section_df.Count)
 graph.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
                 marker_line_width=1.5, opacity=0.6)
