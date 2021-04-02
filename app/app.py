@@ -231,8 +231,10 @@ def main_plot():
 def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, forecast=False):
 
     negative = False
+    session_plot = []
     if forecast:
         df, number_of_EVs, number_of_EVs_end = run(timestamp_start, timestamp_end)
+        session_plot = in_session(df)
         try:
             number_of_EVs, number_of_EVs_end = round(number_of_EVs[0]), round(number_of_EVs_end[0])
         except:
@@ -247,7 +249,6 @@ def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, fore
     div = main_plot()
     density_plot, scatter_plot, prob = plot_density(hour=timestamp_start.hour, day=timestamp_start.dayofweek)
     observed_plot = observed_data()
-    session_plot = in_session(df)
 
 
     return render_template('home.html', 
