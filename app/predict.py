@@ -268,5 +268,3 @@ def weather():
 if __name__ == '__main__':
     number_of_EVs, number_of_EVs_end = run()
     #plot_density()
-    #fit_modelL()
-
