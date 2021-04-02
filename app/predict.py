@@ -51,6 +51,23 @@ def prepare_dataset():
     df = df.assign(Day=df.timestamp_start.dt.floor('D'))
     df["Hour"] = df.Date.dt.hour
 
+    df = df.assign(S_Date_start=df.timestamp_start.dt.floor('H'))
+    df = df.assign(S_Day_start=df.timestamp_start.dt.floor('D'))
+    df['S_Hour_start'] = df.S_Date_start.dt.hour
+    df = df.assign(S_Date_end=df.timestamp_end.dt.floor('H'))
+    df = df.assign(S_Day_end=df.timestamp_end.dt.floor('D'))
+    df['S_Hour_end'] = df.S_Date_end.dt.hour
+
+    # charging variable
+    # df = df.assign(C_Date_start=df.timestamp_start.dt.floor('H'))
+    # df = df.assign(C_Day_start=df.timestamp_start.dt.floor('D'))
+    # df['C_Hour_start'] = df.C_Date_start.dt.hour
+    # df['charging_time_end'] = pd.to_datetime(df['timestamp_start']) + pd.to_timedelta(df[(df['kwh_charged'] / (70 * 3600))], unit='s')
+    # print(df['charging_time_end'].head(5))
+    # df = df.assign(C_Date_end=df.charging_time_end.dt.floor('H'))
+    # df = df.assign(C_Day_end=df.charging_time_end.dt.floor('D'))
+    # df['C_Hour_end'] = df.charging_Date_end.dt.hour
+
     # Exclude outliers
     df = df[df['session_time_hours'] <  50]
     df = df[df['session_time_hours'] > 0.01]
@@ -240,7 +257,7 @@ def run(timestamp_start, timestamp_end, convert_corona=True):
     number_of_EVs, number_of_EVs_end = predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, plot=False)
     # number_of_EVs_, number_of_EVs_end_ = predict_future(y_mean, model_fit_mean, total_rows, timestamp_start, timestamp_end, plot=False)
 
-    return number_of_EVs, number_of_EVs_end
+    return df, number_of_EVs, number_of_EVs_end
 
 
 def weather():

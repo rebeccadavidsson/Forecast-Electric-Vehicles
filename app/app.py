@@ -9,6 +9,9 @@ from plotly.offline import plot
 import pandas as pd
 import numpy as np
 import matplotlib.pylab as plt
+import plotly.graph_objects as go
+from collections import Counter
+
 try:
     from .predict import run, prepare_compact_dataset
 except ImportError:
@@ -64,11 +67,29 @@ def update_graph_live(n):
     return graph
 
 
-def plot_density(hour=15):
+def plot_density(hour=15, day=None):
 
     df = pd.read_pickle("app/static/densities.p")
 
+    if day:
+        # print(day.day)
+        new_day = day
+        # get mean 
+        session_means = pd.read_pickle("app/static/week_days.p")
+        print(session_means[session_means.index == new_day]['normalize'])
+        session_mean_val = session_means[session_means.index == new_day]['normalize'].values[0]
+        print(session_mean_val)
+        if session_mean_val > 1:
+            session_mean_val = 1
+    else:
+        session_mean_val = 1
+
     df_section = df[df["Hour"] == hour] / 3600
+    new_section = len(df_section[df_section["Means"] >= 4])
+    try:
+        probability = round((new_section / len(df_section) * 100 * session_mean_val), 2)
+    except:
+        probability = 0
 
     # fig = px.histogram(df_section, x="Means", histnorm='probability density')
     # fig.show()
@@ -102,7 +123,69 @@ def plot_density(hour=15):
         marker=dict(color='gold'),
     )
     return [plot(fig, auto_open=False, output_type='div'),
-            plot(scatter, auto_open=False, output_type='div')]
+            plot(scatter, auto_open=False, output_type='div'), probability]
+
+
+def in_session(df, date=pd.to_datetime("2020-01-01"), start_time=0, end_time=24, mode='S', plotting=False):
+
+    # df =
+    print(date)
+    # def in_session(df, date, start_time=0, end_time=24, mode='S', plotting=False):
+    subset_start = df[(df[mode + "_Day_start"] == pd.to_datetime(date)) & (df[mode + "_Hour_start"] >= start_time)]
+    subset_end = df[(df[mode + "_Day_end"] == pd.to_datetime(date)) & (df[mode + "_Hour_end"] < end_time)]
+    continuous = df[(df[mode + "_Day_start"] < pd.to_datetime(date)) & (df[mode + "_Day_end"] > pd.to_datetime(date))]
+   
+    subset_start = subset_start[mode + "_Hour_start"] 
+    subset_end = subset_end[mode + "_Hour_end"]
+
+    in_session = []
+    in_out = []
+    for index, value in subset_end.iteritems():
+        if index not in subset_start:
+            in_session.extend(range(start_time, value))
+        if index in subset_start:
+            if value == subset_start[index]:
+                subset_start = subset_start.drop(index)
+                subset_end = subset_end.drop(index)
+                in_out.append(value)
+
+    for index, value in subset_start.iteritems():
+        if index not in subset_end:
+            in_session.extend(range(value + 1, end_time))
+        if index in subset_end:
+            in_session.extend(range(value + 1, subset_end[index]))
+
+    in_session.extend(list(range(24)) * len(continuous))
+    
+    fig = go.Figure(layout_xaxis_range=[start_time - 0.5, end_time - 0.5], layout_yaxis_range=[0,500])
+    fig.add_trace(go.Histogram(x=subset_start, name="Plugging in", marker_color='green'))
+    fig.add_trace(go.Histogram(x=in_session, name="In session", marker_color='orange'))
+    fig.add_trace(go.Histogram(x=in_out, name="In-out", marker_color='grey'))
+    fig.add_trace(go.Histogram(x=subset_end, name="Plugging out", marker_color='crimson'))
+    fig.update_traces(xbins_size=1)
+    fig.update_xaxes(dtick=1)
+
+    fig.update_layout(barmode='stack', bargroupgap=0.1)
+
+    fig.update_layout(
+        margin=dict(l=50, r=40, t=40, b=60),
+        autosize=True,
+        width=900,
+        height=300,
+        showlegend=True,
+        template='plotly_white',
+        xaxis_title="Hour",
+        yaxis_title="Number of cars",
+    )
+    
+    # plugging_in = dict(Counter(subset_start))
+    # plugging_out = dict(Counter(subset_end))
+    # in_session = dict(Counter(in_session))
+    # in_out = dict(Counter(in_out))
+    
+    return plot(fig, auto_open=False, output_type='div')
+    
+
 
 
 def observed_data():
@@ -149,8 +232,11 @@ def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, fore
 
     negative = False
     if forecast:
-        number_of_EVs, number_of_EVs_end = run(timestamp_start, timestamp_end)
-        # number_of_EVs, number_of_EVs_end = number_of_EVs, number_of_EVs_end
+        df, number_of_EVs, number_of_EVs_end = run(timestamp_start, timestamp_end)
+        try:
+            number_of_EVs, number_of_EVs_end = round(number_of_EVs[0]), round(number_of_EVs_end[0])
+        except:
+            number_of_EVs, number_of_EVs_end = number_of_EVs, number_of_EVs_end
 
         if number_of_EVs_end > 0:
             negative = True
@@ -159,8 +245,11 @@ def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, fore
     
     print(number_of_EVs, number_of_EVs_end)
     div = main_plot()
-    density_plot, scatter_plot = plot_density(hour=timestamp_start.hour)
+    density_plot, scatter_plot, prob = plot_density(hour=timestamp_start.hour, day=timestamp_start.dayofweek)
     observed_plot = observed_data()
+    session_plot = in_session(df)
+
+
     return render_template('home.html', 
                             start_date=timestamp_start.strftime("%Y-%m-%d"),
                             end_date=timestamp_end.strftime("%Y-%m-%d"),
@@ -171,6 +260,8 @@ def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, fore
                             number_of_EVs_end=number_of_EVs_end,
                             negative=negative,
                             plot=div, 
+                            prob=prob,
+                            bar=session_plot,
                             scatter_plot=scatter_plot,
                             observed_plot=observed_plot,
                             density_plot=density_plot)
