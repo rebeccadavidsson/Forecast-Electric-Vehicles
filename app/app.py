@@ -102,7 +102,8 @@ def plot_density(hour=15):
         yaxis_title="Session time",
     )
     scatter.update_traces(
-        marker=dict(color='gold')),
+        mode='markers',
+        marker=dict(color='gold'),
     )
     return [plot(fig, auto_open=False, output_type='div'),
             plot(scatter, auto_open=False, output_type='div')]
