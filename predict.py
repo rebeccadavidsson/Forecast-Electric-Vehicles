@@ -8,7 +8,7 @@ sns.set()
 import plotly.express as px
 from flask import jsonify
 import plotly.figure_factory as ff
-from statsmodels.tsa.ar_model import AutoReg
+import statsmodels
 from statsmodels.tsa.arima.model import ARIMA
 from sklearn.metrics import mean_squared_error
 from math import sqrt
@@ -164,15 +164,6 @@ def fit_model(y, factor):
     model_fit = model.fit()
     return model_fit
 
-def fit_modelL(y, factor):
-    series = y * factor
-    # seasonal difference
-    X = series.values
-    differenced = difference(log(X), days_in_year)
-    # fit model
-    model = ARIMA(differenced, order=(5, 0, 1))
-    model_fit = model.fit()
-    return model_fit
 
 def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, print_results=False, future_steps=3000, plot=False):
     future_steps = future_steps
@@ -273,7 +264,7 @@ def weather():
 
 if __name__ == '__main__':
     # weather()
-    # number_of_EVs, number_of_EVs_end = run()
-    plot_density()
-    fit_modelL()
+    number_of_EVs, number_of_EVs_end = run()
+    #plot_density()
+    #fit_modelL()
 
