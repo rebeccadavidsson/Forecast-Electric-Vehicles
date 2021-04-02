@@ -176,7 +176,7 @@ def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, pri
         new_dates.append(new_date)
 
     # forecast = model_fit.forecast(steps=future_steps)
-    forecast = pd.read_pickle('forecast.p')
+    forecast = pd.read_pickle('static/forecast.p')
 
     # invert the differenced forecast to something usable
     history = [x for x in X]

@@ -357,7 +357,7 @@ body {
 }
 
 .page-content .grid > article:first-child,
-.page-content .grid > article:last-child {
+.page-content .grid > article:last-child, .scatter_plot {
   grid-column: 1 / -1;
 }
 

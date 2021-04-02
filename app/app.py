@@ -23,7 +23,7 @@ app = dash.Dash(
     url_base_pathname='/dash/'
 )
 
-section_df = pd.read_pickle("results.p")
+section_df = pd.read_pickle("static/results.p")
 graph = px.bar(x=section_df.index, y=section_df.Count)
 graph.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
                 marker_line_width=1.5, opacity=0.6)
@@ -45,7 +45,7 @@ app.layout = html.Div(
 @app.callback(Output('live-update-text', 'children'),
               Input('interval-component', 'n_intervals'))
 def update_metrics(n):
-    section_df = pd.read_pickle("results.p")
+    section_df = pd.read_pickle("static/results.p")
     graph = px.bar(x=section_df.index, y=section_df.Count)
     graph.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
                     marker_line_width=1.5, opacity=0.6)
@@ -60,7 +60,7 @@ def update_graph_live(n):
 
     # Create the graph with subplots
 
-    section_df = pd.read_pickle("results.p")
+    section_df = pd.read_pickle("static/results.p")
     graph = px.bar(x=section_df.index, y=section_df.Count)
     graph.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
                     marker_line_width=1.5, opacity=0.6)
@@ -91,9 +91,18 @@ def plot_density(hour=15):
     )
 
     scatter = px.scatter(x=df["Hour"], y=df["Means"])
-
+    scatter.update_layout(
+        margin=dict(l=40, r=40, t=40, b=40),
+        autosize=True,
+        width=900,
+        height=300,
+        showlegend=False,
+        template='plotly_white',
+        xaxis_title="Hour",
+        yaxis_title="Session time",
+    )
     return [plot(fig, auto_open=False, output_type='div'),
-        plot(scatter, auto_open=False, output_type='div')]
+            plot(scatter, auto_open=False, output_type='div')]
 
 
 def observed_data():
@@ -121,7 +130,7 @@ def observed_data():
 
 
 def main_plot():
-    section_df = pd.read_pickle("results.p")
+    section_df = pd.read_pickle("static/results.p")
     graph = px.bar(x=section_df.index, y=section_df.Count)
     graph.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
                     marker_line_width=1.5, opacity=0.6)
