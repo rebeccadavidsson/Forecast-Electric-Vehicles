@@ -18,6 +18,7 @@ from sklearn.metrics import r2_score
 from scipy.stats import norm
 from sklearn.neighbors import KernelDensity
 
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.formula.api import ols
 from statsmodels.graphics import tsaplots
 
@@ -159,7 +160,7 @@ def fit_model(y, factor):
     X = series.values
     differenced = difference(X, days_in_year)
     # fit model
-    model = ARIMA(differenced, order=(5, 0, 1))
+    model = SARIMAX(differenced, order=(5, 0, 1), seasonal_order=(0, 0, 0, 0))
     model_fit = model.fit()
     return model_fit
 

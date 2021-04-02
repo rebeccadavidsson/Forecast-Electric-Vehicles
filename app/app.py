@@ -23,16 +23,12 @@ app = dash.Dash(
     url_base_pathname='/dash/'
 )
 
-section_df = pd.read_pickle("app/static/results.p")
-graph = px.bar(x=section_df.index, y=section_df.Count)
-graph.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
-                marker_line_width=1.5, opacity=0.6)
-                
+
 app.layout = html.Div(
     html.Div([
         html.H4('Charging EV count predictions'),
         html.Div(id='live-update-text'),
-        dcc.Graph(id='live-update-graph', figure=graph),
+        dcc.Graph(id='live-update-graph'),
         dcc.Interval(
             id='predictions',
             interval=10000, # in milliseconds
@@ -198,8 +194,8 @@ def forecast():
     timestamp_end = pd.to_datetime(end_str)
     return predict(timestamp_start=timestamp_start, timestamp_end=timestamp_end, forecast=True)
 
-def run_app(x, y):
-    server.run(host='0.0.0.0')
+def run_app(host, post):
+    server.run(host=host, port=port)
 
 if __name__ == '__main__':
     server.run(debug=True)
