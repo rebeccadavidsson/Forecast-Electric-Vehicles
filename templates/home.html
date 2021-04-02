@@ -60,9 +60,9 @@
                 <li>
                   <a href="#observed">
                     <svg>
-                      <use xlink:href="#collection"></use>
+                      <use ></use>
                     </svg>
-                    <span>Predictions</span>
+                    <span></span>
                   </a>
                 </li>
                 
@@ -74,6 +74,7 @@
             <section class="search-and-user">
           
                 <h3>Get number of EVs charging at a given moment:</h3>
+                <br>
                 <div class="select_row">
                     <label for="start">Start date:</label>
 
@@ -146,11 +147,12 @@
               
             </section>
             <section class="grid">
-            <article id="main_plot">
-                <h4 style="font-weight: 800;" class="inner_title">Future Predictions</h4>
-                {{ plot|safe }}
-            </article>
-              <article style="max-width:400px;">
+                <article id="observed">
+                    <h5 style="font-weight: 800;" class="inner_title">Observed Data</h5>
+                    {{ observed_plot|safe }}
+                  </article>
+          
+              <article style="max-width:400px; height: inherit;">
                   <div class="inner">
                       <h4 style="font-weight: 800; padding-bottom: 0px;" class="inner_title" >Prediction</h4>
                       {% if number_of_EVs ==  [] %}
@@ -159,13 +161,13 @@
                         {% else %}
                         <div class="nr_WVs">
                             <div>
-                                <p class="inner_title" style="padding-top: 0.4em; padding-bottom: 4.3em;">EVs charging at {{ start_date }}, {{ start_time }}:</p>
+                                <p class="inner_title" style="padding-top: 0.4em; ">EVs charging at {{ start_date }}, {{ start_time }}:</p>
                                 <div class="center">
                                     <h1 class="inner_title dot">{{ number_of_EVs }}</h1>
                                 </div>
                             </div>
                             <div>
-                                <p class="inner_title" style="padding-top: 0.4em;"></h5>EVs charging between {{ start_date }}, {{ start_time }} and  {{ end_date }}, {{ end_time }}  </p>
+                                <p class="inner_title" style="padding-top: 0.4em;"></h5>New charging/discharging {{ start_date }}, {{ start_time }} and  {{ end_date }}, {{ end_time }}  </p>
            
                                 <div class="center">
                                     <h1 class="inner_title dot darkblue">{{ number_of_EVs_end }}</h1>
@@ -177,42 +179,16 @@
                     </div>
               </article>
               <article id="density_plot">
-                <select style="margin-right: 1em" name="start_time_select">
-                    <option {% if start_time=='00:00' %} selected="selected"{% endif %} value="0">00:00 am</option>
-                    <option {% if start_time=='01:00' %} selected="selected"{% endif %}  value="1">1:00 am</option>
-                    <option {% if start_time=='02:00' %} selected="selected"{% endif %} value="2">2:00 am</option>
-                    <option {% if start_time=='03:00' %} selected="selected"{% endif %} value="3">3:00 am</option>
-                    <option {% if start_time=='04:00' %} selected="selected"{% endif %} value="4">4:00 am</option>
-                    <option {% if start_time=='05:00' %} selected="selected"{% endif %} value="5">5:00 am</option>
-                    <option {% if start_time=='06:00' %} selected="selected"{% endif %} value="6">6:00 am</option>
-                    <option {% if start_time=='07:00' %} selected="selected"{% endif %} value="7">7:00 am</option>
-                    <option {% if start_time=='08:00' %} selected="selected"{% endif %}value="8">8:00 am</option>
-                    <option {% if start_time=='09:00' %} selected="selected"{% endif %}value="9">9:00 am</option>
-                    <option {% if start_time=='10:00' %} selected="selected"{% endif %}value="10">10:00 am</option>
-                    <option {% if start_time=='11:00' %} selected="selected"{% endif %}value="11">11:00 am</option>
-                    <option {% if start_time=='12:00' %} selected="selected"{% endif %}value="12">12:00 pm</option>
-                    <option {% if start_time=='13:00' %} selected="selected"{% endif %}value="13">1:00 pm</option>
-                    <option {% if start_time=='14:00' %} selected="selected"{% endif %}value="14">2:00 pm</option>
-                    <option {% if start_time=='15:00' %} selected="selected"{% endif %}value="15">3:00 pm</option>
-                    <option {% if start_time=='16:00' %} selected="selected"{% endif %}value="16">4:00 pm</option>
-                    <option {% if start_time=='17:00' %} selected="selected"{% endif %}value="17">5:00 pm</option>
-                    <option {% if start_time=='18:00' %} selected="selected"{% endif %}value="18">6:00 pm</option>
-                    <option {% if start_time=='19:00' %} selected="selected"{% endif %}value="19">7:00 pm</option>
-                    <option {% if start_time=='20:00' %} selected="selected"{% endif %}value="20">8:00 pm</option>
-                    <option {% if start_time=='21:00' %} selected="selected"{% endif %}value="21">9:00 pm</option>
-                    <option {% if start_time=='22:00' %} selected="selected"{% endif %}value="22">10:00 pm</option>
-                    <option {% if start_time=='23:00' %} selected="selected"{% endif %}value="23">11:00 pm</option>
-                </select>
                 <div class="inner" id="prob_dens">
-                    <h4 class="inner_title">Probability curve of the charging session length at a given hour </h4>
+                    <h4 class="inner_title">Probability curve of the charging session length at {{start_time}} </h4>
                     {{ density_plot|safe }}
                 </div>
             </article>
-
-              <article id="observed">
-                <h5 style="font-weight: 800;" class="inner_title">Observed Data</h5>
-                {{ observed_plot|safe }}
-              </article>
+            <article id="main_plot">
+                <h4 style="font-weight: 800;" class="inner_title">Future Predictions</h4>
+                {{ plot|safe }}
+            </article>
+             
             </section>
             <footer class="page-footer">
               <span>Made by: Abel, Daniel, Katinka, Rebecca</span>

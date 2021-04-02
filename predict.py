@@ -166,8 +166,17 @@ def fit_model(y, factor):
     model_fit = model.fit()
     return model_fit
 
+def fit_modelL(y, factor):
+    series = y * factor
+    # seasonal difference
+    X = series.values
+    differenced = difference(log(X), days_in_year)
+    # fit model
+    model = ARIMA(differenced, order=(5, 0, 1))
+    model_fit = model.fit()
+    return model_fit
 
-def predict_future(y, model_fit, total_rows, print_results=False, future_steps=3000, plot=False):
+def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, print_results=False, future_steps=3000, plot=False):
     future_steps = future_steps
     last_date = y.index[-1]
 
@@ -193,21 +202,21 @@ def predict_future(y, model_fit, total_rows, print_results=False, future_steps=3
 
     series = y * factor
     new_index = list(series.index) + new_dates
-    print("Predict up until", new_index[-1])
     predictions = np.asarray(history) / np.asarray(factor)
 
     results_df = pd.DataFrame(predictions, index=new_index)
-    number_of_EVs = results_df[results_df.index == pd.to_datetime('2021-04-04 14:00:00')][0]
-    number_of_EVs_end = results_df[results_df.index == pd.to_datetime('2021-04-04 16:00:00')][0]
+    print(timestamp_start, timestamp_end, "TIMESTAMP")
+    number_of_EVs = results_df[results_df.index == timestamp_start][0]
+    number_of_EVs_end = results_df[results_df.index == timestamp_end][0]
 
     if print_results:
         print("Number of EVs predicted for this sample ", round(number_of_EVs.values[0]))
 
         difference = round(number_of_EVs.values[0] - number_of_EVs_end.values[0])
         if difference < 0:
-            print("Number of EVs discharged between 14:00 and 16:00 on 2021-04-04 ", abs(round(difference)))
+            print("Number of EVs discharged", abs(round(number_of_EVs)))
         else:
-            print("Number of NEW EVs charging between 14:00 and 16:00 on 2021-04-04 ", round(difference))
+            print("Number of NEW EVs charging", round(difference))
 
     if plot:
         section_index, section = new_index[-3000:], predictions[-3000:]
@@ -218,10 +227,10 @@ def predict_future(y, model_fit, total_rows, print_results=False, future_steps=3
         plt.legend()
         plt.show()
 
-    return results_df, number_of_EVs.values[0], number_of_EVs_end.values[0], predictions
+    return number_of_EVs.values[0], number_of_EVs_end.values[0]
     
 
-def run():
+def run(timestamp_start, timestamp_end):
     
     print("Predicting...")
     df, total_rows, counted_df, mean_df = prepare_dataset()
@@ -236,8 +245,8 @@ def run():
     model_fit = fit_model(y, factor)
     model_fit_mean = fit_model(y_mean, factor)
 
-    results_df, number_of_EVs, number_of_EVs_end, predictions = predict_future(y, model_fit, total_rows, plot=False)
-    results_df_means, number_of_EVs_, number_of_EVs_end_, predictions_means = predict_future(y_mean, model_fit_mean, total_rows, plot=False)
+    number_of_EVs, number_of_EVs_end = predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, plot=False)
+    # number_of_EVs_, number_of_EVs_end_ = predict_future(y_mean, model_fit_mean, total_rows, timestamp_start, timestamp_end, plot=False)
 
     return number_of_EVs, number_of_EVs_end
 
@@ -268,5 +277,5 @@ if __name__ == '__main__':
     # weather()
     # number_of_EVs, number_of_EVs_end = run()
     plot_density()
-
+    fit_modelL()
 

@@ -77,7 +77,7 @@ def plot_density(hour=15):
     group_labels = ['distplot']
     fig = ff.create_distplot([df_section["Means"].values], group_labels, bin_size=len(df_section) / 20, curve_type="kde")
     fig.update_layout(
-        margin=dict(l=30, r=30, t=30, b=10),
+        margin=dict(l=40, r=40, t=40, b=40),
         autosize=True,
         width=600,
         height=300,
@@ -132,19 +132,19 @@ def main_plot():
 def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, forecast=False):
 
     if forecast:
-        number_of_EVs, number_of_EVs_end = run()
+        number_of_EVs, number_of_EVs_end = run(timestamp_start, timestamp_end)
         number_of_EVs, number_of_EVs_end = round(number_of_EVs), round(number_of_EVs_end)
     else:
         number_of_EVs, number_of_EVs_end = [], []
     
     print(number_of_EVs, number_of_EVs_end)
     div = main_plot()
-    density_plot = plot_density()
+    density_plot = plot_density(hour=timestamp_start.hour)
     observed_plot = observed_data()
     return render_template('home.html', 
                             start_date=timestamp_start.strftime("%Y-%m-%d"),
                             end_date=timestamp_end.strftime("%Y-%m-%d"),
-                            start_time=str(timestamp_end.hour) + ":00",
+                            start_time=str(timestamp_start.hour) + ":00",
                             end_time=str(timestamp_end.hour) + ":00",
                             selected_time=timestamp_start,
                             number_of_EVs=number_of_EVs, 
@@ -167,7 +167,7 @@ def forecast():
 
     start_str = start_date + " " + start_time + ':00'
     end_str = end_date + " " + end_time + ':00'
-
+    print(start_str, end_str)
     timestamp_start = pd.to_datetime(start_str)
     timestamp_end = pd.to_datetime(end_str)
     return predict(timestamp_start=timestamp_start, timestamp_end=timestamp_end, forecast=True)
