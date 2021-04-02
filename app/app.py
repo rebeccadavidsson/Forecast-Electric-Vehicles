@@ -90,7 +90,7 @@ def plot_density(hour=15):
         yaxis_title="Probability",
     )
 
-    scatter = px.scatter(x=df["Hour"], y=df["Means"])
+    scatter = px.scatter(x=df["Hour"], y=df["Means"], trendline="lowess")
     scatter.update_layout(
         margin=dict(l=50, r=40, t=40, b=60),
         autosize=True,
@@ -100,6 +100,9 @@ def plot_density(hour=15):
         template='plotly_white',
         xaxis_title="Hour",
         yaxis_title="Session time",
+    )
+    scatter.update_traces(
+        marker=dict(color='gold')),
     )
     return [plot(fig, auto_open=False, output_type='div'),
             plot(scatter, auto_open=False, output_type='div')]
@@ -189,7 +192,7 @@ def forecast():
     timestamp_end = pd.to_datetime(end_str)
     return predict(timestamp_start=timestamp_start, timestamp_end=timestamp_end, forecast=True)
 
-def run_app():
+def run_app(x, y):
     server.run(debug=True, port=8080)
 
 if __name__ == '__main__':
