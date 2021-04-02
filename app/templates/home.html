@@ -170,7 +170,13 @@
                                 <p class="inner_title" style="padding-top: 0.4em;"></h5>New charging/discharging {{ start_date }}, {{ start_time }} and  {{ end_date }}, {{ end_time }}  </p>
            
                                 <div class="center">
-                                    <h1 class="inner_title dot darkblue">{{ number_of_EVs_end }}</h1>
+                                    <h1 class="inner_title dot darkblue">
+                                      {% if negative %}
+                                        +
+                                      {% else %}
+                                        -
+                                      {% endif %}                                      
+                                      {{ number_of_EVs_end }}</h1>
                                 </div>
                             </div>
                          </div>
