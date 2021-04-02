@@ -32,8 +32,8 @@ WINDOW = FUTURE_DAYS + 36
 
 def prepare_dataset():
 
-    weather_df = pd.read_csv("weather.csv", sep=";")
-    df = pd.read_csv("charge_sessions_sampled.csv")
+    weather_df = pd.read_csv("app/static/weather.csv", sep=";")
+    df = pd.read_csv("app/static/charge_sessions_sampled.csv")
 
     # Convert datetime
     start_date = pd.to_datetime('2019-01-01 00:00')
@@ -71,7 +71,7 @@ def prepare_dataset():
 
 def prepare_compact_dataset():
 
-    df = pd.read_csv("charge_sessions_sampled.csv")
+    df = pd.read_csv("app/static/charge_sessions_sampled.csv")
 
     # Convert timestamp
     df['session_time'] = df['timestamp_end'] - df['timestamp_start']
@@ -176,7 +176,7 @@ def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, pri
         new_dates.append(new_date)
 
     # forecast = model_fit.forecast(steps=future_steps)
-    forecast = pd.read_pickle('static/forecast.p')
+    forecast = pd.read_pickle('app/static/forecast.p')
 
     # invert the differenced forecast to something usable
     history = [x for x in X]
@@ -264,9 +264,7 @@ def weather():
     
 
 if __name__ == '__main__':
-    weather()
-    # number_of_EVs, number_of_EVs_end = run()
-    number_of_EVs, number_of_EVs_end = runtest()
+    number_of_EVs, number_of_EVs_end = run()
     #plot_density()
     #fit_modelL()
 
