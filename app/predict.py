@@ -253,26 +253,6 @@ def run(timestamp_start, timestamp_end):
 
     return number_of_EVs, number_of_EVs_end
 
-def runtest(timestamp_start, timestamp_end):
-    
-    print("Predicting...")
-    df, total_rows, counted_df, mean_df = prepare_dataset()
-    y = counted_df["timestamp_start"]
-    y_mean = mean_df["session_time"]
-
-
-    y, converted = convert_df_corona(counted_df)
-    y_mean, converted_mean = convert_df_corona(mean_df)
-
-    factor = len(y) / total_rows
-    model_fit = fit_testmodel(y, factor, df)
-    model_fit_mean = fit_testmodel(y_mean, factor, df)
-
-    number_of_EVs, number_of_EVs_end = predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, plot=False)
-    # number_of_EVs_, number_of_EVs_end_ = predict_future(y_mean, model_fit_mean, total_rows, timestamp_start, timestamp_end, plot=False)
-
-    return number_of_EVs, number_of_EVs_end
-
 
 def weather():
     df, total_rows, counted_df, _ = prepare_dataset()
