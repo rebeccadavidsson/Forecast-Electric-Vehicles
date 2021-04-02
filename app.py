@@ -75,7 +75,8 @@ def plot_density(hour=15):
     # fig = px.histogram(df_section, x="Means", histnorm='probability density')
     # fig.show()
     group_labels = ['distplot']
-    fig = ff.create_distplot([df_section["Means"].values], group_labels, bin_size=len(df_section) / 20, curve_type="kde")
+    fig = ff.create_distplot(
+        [df_section["Means"].values], group_labels, show_hist=False, bin_size=len(df_section) / 20, curve_type="kde")
     fig.update_layout(
         margin=dict(l=40, r=40, t=40, b=40),
         autosize=True,

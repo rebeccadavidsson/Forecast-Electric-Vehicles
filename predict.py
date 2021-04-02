@@ -165,7 +165,7 @@ def fit_model(y, factor):
     return model_fit
 
 
-def fit_testmodel(y, factor):
+def fit_testmodel(y, factor, df):
     series = y * factor
     # seasonal difference
     X = series.values
@@ -174,7 +174,7 @@ def fit_testmodel(y, factor):
 
     exogx = np.df["wind"].reshape(-1,1)
 
-    model = ARIMA(differenced, order=(5, 0, 1),exog=exogx )
+    model = ARIMA(differenced,df, order=(5, 0, 1),exog=exogx )
     model_fit = model.fit()
     return model_fit
 
@@ -253,6 +253,26 @@ def run(timestamp_start, timestamp_end):
 
     return number_of_EVs, number_of_EVs_end
 
+def runtest(timestamp_start, timestamp_end):
+    
+    print("Predicting...")
+    df, total_rows, counted_df, mean_df = prepare_dataset()
+    y = counted_df["timestamp_start"]
+    y_mean = mean_df["session_time"]
+
+
+    y, converted = convert_df_corona(counted_df)
+    y_mean, converted_mean = convert_df_corona(mean_df)
+
+    factor = len(y) / total_rows
+    model_fit = fit_testmodel(y, factor, df)
+    model_fit_mean = fit_testmodel(y_mean, factor, df)
+
+    number_of_EVs, number_of_EVs_end = predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, plot=False)
+    # number_of_EVs_, number_of_EVs_end_ = predict_future(y_mean, model_fit_mean, total_rows, timestamp_start, timestamp_end, plot=False)
+
+    return number_of_EVs, number_of_EVs_end
+
 
 def weather():
     df, total_rows, counted_df, _ = prepare_dataset()
@@ -279,6 +299,7 @@ def weather():
 if __name__ == '__main__':
     weather()
     # number_of_EVs, number_of_EVs_end = run()
+    number_of_EVs, number_of_EVs_end = runtest()
     #plot_density()
     #fit_modelL()
 
