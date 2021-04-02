@@ -197,6 +197,7 @@ def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, pri
     print(timestamp_start, timestamp_end, "TIMESTAMP")
     number_of_EVs = results_df[results_df.index == timestamp_start][0]
     number_of_EVs_end = results_df[results_df.index == timestamp_end][0]
+    difference = number_of_EVs_end.values[0] - number_of_EVs.values[0]
 
     if print_results:
         print("Number of EVs predicted for this sample ", round(number_of_EVs.values[0]))
@@ -216,7 +217,7 @@ def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, pri
         plt.legend()
         plt.show()
 
-    return number_of_EVs.values[0], number_of_EVs_end.values[0]
+    return number_of_EVs.values[0], difference
     
 
 def run(timestamp_start, timestamp_end, convert_corona=True):
