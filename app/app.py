@@ -173,6 +173,9 @@ def forecast():
     timestamp_end = pd.to_datetime(end_str)
     return predict(timestamp_start=timestamp_start, timestamp_end=timestamp_end, forecast=True)
 
+def run_app():
+    server.run(debug=True, port=8080)
+
 if __name__ == '__main__':
     server.run(debug=True, port=8080)
 
