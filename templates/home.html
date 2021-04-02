@@ -8,17 +8,17 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
         <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
-
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <title></title>
     </head>
     <body>
 
         {% block body %}
-       
+        <form action="/forecast/" method="POST">
 
           <header class="page-header">
             <nav>
-              <a href="#0" aria-label="forecastr logo" class="logo">
+              <a href="#0" aria-label="forecast logo" class="logo">
                 <svg width="140" height="49">
                   <use xlink:href="#logo"></use>
                 </svg>
@@ -72,77 +72,77 @@
           <section class="page-content">
               <h1>Vandebron Challenge</h1>
             <section class="search-and-user">
-              <form>
+          
                 <h3>Get number of EVs charging at a given moment:</h3>
                 <div class="select_row">
                     <label for="start">Start date:</label>
 
-                    <input type="date" id="start" name="trip-start"
-                        value="2021-02-28"
+                    <input type="date" id="start" name="start_date_select"
+                    value={{start_date}}
                         min="2019-01-01" max="2021-07-01">
-                    <select style="margin-right: 1em">
-                        <option value="0">12:00 am</option>
-                        <option value="1">1:00 am</option>
-                        <option value="2">2:00 am</option>
-                        <option value="3">3:00 am</option>
-                        <option value="4">4:00 am</option>
-                        <option value="5">5:00 am</option>
-                        <option value="6">6:00 am</option>
-                        <option value="7">7:00 am</option>
-                        <option value="8">8:00 am</option>
-                        <option value="9">9:00 am</option>
-                        <option value="10">10:00 am</option>
-                        <option value="11">11:00 am</option>
-                        <option value="12">12:00 pm</option>
-                        <option value="13">1:00 pm</option>
-                        <option value="14">2:00 pm</option>
-                        <option value="15">3:00 pm</option>
-                        <option value="16">4:00 pm</option>
-                        <option value="17">5:00 pm</option>
-                        <option value="18">6:00 pm</option>
-                        <option value="19">7:00 pm</option>
-                        <option value="20">8:00 pm</option>
-                        <option value="21">9:00 pm</option>
-                        <option value="22">10:00 pm</option>
-                        <option value="23">11:00 pm</option>
+                    <select style="margin-right: 1em" name="start_time_select">
+                        <option {% if start_time=='00:00' %} selected="selected"{% endif %} value="0">00:00 am</option>
+                        <option {% if start_time=='01:00' %} selected="selected"{% endif %}  value="1">1:00 am</option>
+                        <option {% if start_time=='02:00' %} selected="selected"{% endif %} value="2">2:00 am</option>
+                        <option {% if start_time=='03:00' %} selected="selected"{% endif %} value="3">3:00 am</option>
+                        <option {% if start_time=='04:00' %} selected="selected"{% endif %} value="4">4:00 am</option>
+                        <option {% if start_time=='05:00' %} selected="selected"{% endif %} value="5">5:00 am</option>
+                        <option {% if start_time=='06:00' %} selected="selected"{% endif %} value="6">6:00 am</option>
+                        <option {% if start_time=='07:00' %} selected="selected"{% endif %} value="7">7:00 am</option>
+                        <option {% if start_time=='08:00' %} selected="selected"{% endif %}value="8">8:00 am</option>
+                        <option {% if start_time=='09:00' %} selected="selected"{% endif %}value="9">9:00 am</option>
+                        <option {% if start_time=='10:00' %} selected="selected"{% endif %}value="10">10:00 am</option>
+                        <option {% if start_time=='11:00' %} selected="selected"{% endif %}value="11">11:00 am</option>
+                        <option {% if start_time=='12:00' %} selected="selected"{% endif %}value="12">12:00 pm</option>
+                        <option {% if start_time=='13:00' %} selected="selected"{% endif %}value="13">1:00 pm</option>
+                        <option {% if start_time=='14:00' %} selected="selected"{% endif %}value="14">2:00 pm</option>
+                        <option {% if start_time=='15:00' %} selected="selected"{% endif %}value="15">3:00 pm</option>
+                        <option {% if start_time=='16:00' %} selected="selected"{% endif %}value="16">4:00 pm</option>
+                        <option {% if start_time=='17:00' %} selected="selected"{% endif %}value="17">5:00 pm</option>
+                        <option {% if start_time=='18:00' %} selected="selected"{% endif %}value="18">6:00 pm</option>
+                        <option {% if start_time=='19:00' %} selected="selected"{% endif %}value="19">7:00 pm</option>
+                        <option {% if start_time=='20:00' %} selected="selected"{% endif %}value="20">8:00 pm</option>
+                        <option {% if start_time=='21:00' %} selected="selected"{% endif %}value="21">9:00 pm</option>
+                        <option {% if start_time=='22:00' %} selected="selected"{% endif %}value="22">10:00 pm</option>
+                        <option {% if start_time=='23:00' %} selected="selected"{% endif %}value="23">11:00 pm</option>
                     </select>
 
                     <label for="start">End date:</label>
 
-                    <input type="date" id="end" name="trip-start"
-                            value="2021-02-28"
+                    <input type="date" id="end" name="end_date_select"
+                            value={{end_date}}
                             min="2019-01-01" max="2021-07-01">
-                    <select>
-                        <option value="0">12:00 am</option>
-                        <option value="1">1:00 am</option>
-                        <option value="2">2:00 am</option>
-                        <option value="3">3:00 am</option>
-                        <option value="4">4:00 am</option>
-                        <option value="5">5:00 am</option>
-                        <option value="6">6:00 am</option>
-                        <option value="7">7:00 am</option>
-                        <option value="8">8:00 am</option>
-                        <option value="9">9:00 am</option>
-                        <option value="10">10:00 am</option>
-                        <option value="11">11:00 am</option>
-                        <option value="12">12:00 pm</option>
-                        <option value="13">1:00 pm</option>
-                        <option value="14">2:00 pm</option>
-                        <option value="15">3:00 pm</option>
-                        <option value="16">4:00 pm</option>
-                        <option value="17">5:00 pm</option>
-                        <option value="18">6:00 pm</option>
-                        <option value="19">7:00 pm</option>
-                        <option value="20">8:00 pm</option>
-                        <option value="21">9:00 pm</option>
-                        <option value="22">10:00 pm</option>
-                        <option value="23">11:00 pm</option>
-                    </select>
+                        <select style="margin-right: 1em"  name="end_time_select">
+                            <option {% if end_time=='00:00' %} selected="selected"{% endif %} value="0">00:00 am</option>
+                            <option {% if end_time=='01:00' %} selected="selected"{% endif %}  value="1">1:00 am</option>
+                            <option {% if end_time=='02:00' %} selected="selected"{% endif %} value="2">2:00 am</option>
+                            <option {% if end_time=='03:00' %} selected="selected"{% endif %} value="3">3:00 am</option>
+                            <option {% if end_time=='04:00' %} selected="selected"{% endif %} value="4">4:00 am</option>
+                            <option {% if end_time=='05:00' %} selected="selected"{% endif %} value="5">5:00 am</option>
+                            <option {% if end_time=='06:00' %} selected="selected"{% endif %} value="6">6:00 am</option>
+                            <option {% if end_time=='07:00' %} selected="selected"{% endif %} value="7">7:00 am</option>
+                            <option {% if end_time=='08:00' %} selected="selected"{% endif %}value="8">8:00 am</option>
+                            <option {% if end_time=='09:00' %} selected="selected"{% endif %}value="9">9:00 am</option>
+                            <option {% if end_time=='10:00' %} selected="selected"{% endif %}value="10">10:00 am</option>
+                            <option {% if end_time=='11:00' %} selected="selected"{% endif %}value="11">11:00 am</option>
+                            <option {% if end_time=='12:00' %} selected="selected"{% endif %}value="12">12:00 pm</option>
+                            <option {% if end_time=='13:00' %} selected="selected"{% endif %}value="13">1:00 pm</option>
+                            <option {% if end_time=='14:00' %} selected="selected"{% endif %}value="14">2:00 pm</option>
+                            <option {% if end_time=='15:00' %} selected="selected"{% endif %}value="15">3:00 pm</option>
+                            <option {% if end_time=='16:00' %} selected="selected"{% endif %}value="16">4:00 pm</option>
+                            <option {% if end_time=='17:00' %} selected="selected"{% endif %}value="17">5:00 pm</option>
+                            <option {% if end_time=='18:00' %} selected="selected"{% endif %}value="18">6:00 pm</option>
+                            <option {% if end_time=='19:00' %} selected="selected"{% endif %}value="19">7:00 pm</option>
+                            <option {% if end_time=='20:00' %} selected="selected"{% endif %}value="20">8:00 pm</option>
+                            <option {% if end_time=='21:00' %} selected="selected"{% endif %}value="21">9:00 pm</option>
+                            <option {% if end_time=='22:00' %} selected="selected"{% endif %}value="22">10:00 pm</option>
+                            <option {% if end_time=='23:00' %} selected="selected"{% endif %}value="23">11:00 pm</option>
+                        </select>
                 </div>
                
+                <button class="btn-lg btn-light" onclick="$('#loading').show();" type="submit">FORECAST</button>
 
-
-              </form>
+              
               
             </section>
             <section class="grid">
@@ -153,38 +153,55 @@
               <article style="max-width:400px;">
                   <div class="inner">
                       <h4 style="font-weight: 800; padding-bottom: 0px;" class="inner_title" >Prediction</h4>
-                      <h4 class="inner_title" style="padding-top: 0.4em;">Number of EVs charging at {{ selected_time }}:</h4>
-                      <div class="center">
-                        <h1 class="inner_title dot">{{ number_of_EVs }}</h1>
-                     </div>
+                      {% if number_of_EVs ==  [] %}
+                        <button onclick="$('#loading').show();" type="submit" style="margin-left: 1.5em;" class="btn btn-light">Predict</button>
+
+                        {% else %}
+                        <div class="nr_WVs">
+                            <div>
+                                <p class="inner_title" style="padding-top: 0.4em; padding-bottom: 4.3em;">EVs charging at {{ start_date }}, {{ start_time }}:</p>
+                                <div class="center">
+                                    <h1 class="inner_title dot">{{ number_of_EVs }}</h1>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="inner_title" style="padding-top: 0.4em;"></h5>EVs charging between {{ start_date }}, {{ start_time }} and  {{ end_date }}, {{ end_time }}  </p>
+           
+                                <div class="center">
+                                    <h1 class="inner_title dot darkblue">{{ number_of_EVs_end }}</h1>
+                                </div>
+                            </div>
+                         </div>
+                     
+                        {% endif %}
                     </div>
               </article>
               <article id="density_plot">
-                <select>
-                    <option value="0">12:00 am</option>
-                    <option value="1">1:00 am</option>
-                    <option value="2">2:00 am</option>
-                    <option value="3">3:00 am</option>
-                    <option value="4">4:00 am</option>
-                    <option value="5">5:00 am</option>
-                    <option value="6">6:00 am</option>
-                    <option value="7">7:00 am</option>
-                    <option value="8">8:00 am</option>
-                    <option value="9">9:00 am</option>
-                    <option value="10">10:00 am</option>
-                    <option value="11">11:00 am</option>
-                    <option value="12">12:00 pm</option>
-                    <option value="13">1:00 pm</option>
-                    <option value="14">2:00 pm</option>
-                    <option value="15">3:00 pm</option>
-                    <option value="16">4:00 pm</option>
-                    <option value="17">5:00 pm</option>
-                    <option value="18">6:00 pm</option>
-                    <option value="19">7:00 pm</option>
-                    <option value="20">8:00 pm</option>
-                    <option value="21">9:00 pm</option>
-                    <option value="22">10:00 pm</option>
-                    <option value="23">11:00 pm</option>
+                <select style="margin-right: 1em" name="start_time_select">
+                    <option {% if start_time=='00:00' %} selected="selected"{% endif %} value="0">00:00 am</option>
+                    <option {% if start_time=='01:00' %} selected="selected"{% endif %}  value="1">1:00 am</option>
+                    <option {% if start_time=='02:00' %} selected="selected"{% endif %} value="2">2:00 am</option>
+                    <option {% if start_time=='03:00' %} selected="selected"{% endif %} value="3">3:00 am</option>
+                    <option {% if start_time=='04:00' %} selected="selected"{% endif %} value="4">4:00 am</option>
+                    <option {% if start_time=='05:00' %} selected="selected"{% endif %} value="5">5:00 am</option>
+                    <option {% if start_time=='06:00' %} selected="selected"{% endif %} value="6">6:00 am</option>
+                    <option {% if start_time=='07:00' %} selected="selected"{% endif %} value="7">7:00 am</option>
+                    <option {% if start_time=='08:00' %} selected="selected"{% endif %}value="8">8:00 am</option>
+                    <option {% if start_time=='09:00' %} selected="selected"{% endif %}value="9">9:00 am</option>
+                    <option {% if start_time=='10:00' %} selected="selected"{% endif %}value="10">10:00 am</option>
+                    <option {% if start_time=='11:00' %} selected="selected"{% endif %}value="11">11:00 am</option>
+                    <option {% if start_time=='12:00' %} selected="selected"{% endif %}value="12">12:00 pm</option>
+                    <option {% if start_time=='13:00' %} selected="selected"{% endif %}value="13">1:00 pm</option>
+                    <option {% if start_time=='14:00' %} selected="selected"{% endif %}value="14">2:00 pm</option>
+                    <option {% if start_time=='15:00' %} selected="selected"{% endif %}value="15">3:00 pm</option>
+                    <option {% if start_time=='16:00' %} selected="selected"{% endif %}value="16">4:00 pm</option>
+                    <option {% if start_time=='17:00' %} selected="selected"{% endif %}value="17">5:00 pm</option>
+                    <option {% if start_time=='18:00' %} selected="selected"{% endif %}value="18">6:00 pm</option>
+                    <option {% if start_time=='19:00' %} selected="selected"{% endif %}value="19">7:00 pm</option>
+                    <option {% if start_time=='20:00' %} selected="selected"{% endif %}value="20">8:00 pm</option>
+                    <option {% if start_time=='21:00' %} selected="selected"{% endif %}value="21">9:00 pm</option>
+                    <option {% if start_time=='22:00' %} selected="selected"{% endif %}value="22">10:00 pm</option>
+                    <option {% if start_time=='23:00' %} selected="selected"{% endif %}value="23">11:00 pm</option>
                 </select>
                 <div class="inner" id="prob_dens">
                     <h4 class="inner_title">Probability curve of the charging session length at a given hour </h4>
@@ -201,7 +218,10 @@
               <span>Made by: Abel, Daniel, Katinka, Rebecca</span>
                 </footer>
           </section>
+        </form>
           {% endblock %}
+          <div id="loading" style="display:none;"><img src="loading.gif" alt="" />Loading!</div>
+ 
     </body>
     <script href="{{ url_for('static', filename='js/main.js') }}"></script>
     

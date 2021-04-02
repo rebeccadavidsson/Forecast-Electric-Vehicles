@@ -221,18 +221,6 @@ def predict_future(y, model_fit, total_rows, print_results=False, future_steps=3
     return results_df, number_of_EVs.values[0], number_of_EVs_end.values[0], predictions
     
 
-def plot_density():
-
-    df = pd.read_pickle("densities.p")
-
-    df_section = df[df["Hour"] == 15]
-
-    # fig = px.histogram(df_section, x="Means", histnorm='probability density')
-    # fig.show()
-    group_labels = ['distplot']
-    fig2 = ff.create_distplot([df_section["Means"].values], group_labels, bin_size=1000, curve_type="kde")
-    fig2.show()
-
 def run():
     
     print("Predicting...")
@@ -251,12 +239,10 @@ def run():
     results_df, number_of_EVs, number_of_EVs_end, predictions = predict_future(y, model_fit, total_rows, plot=False)
     results_df_means, number_of_EVs_, number_of_EVs_end_, predictions_means = predict_future(y_mean, model_fit_mean, total_rows, plot=False)
 
-    plot_density(predictions, predictions_means, mean_df)
-
     return number_of_EVs, number_of_EVs_end
 
 
-def gekkepoep():
+def weather():
     df, total_rows, counted_df, _ = prepare_dataset()
     y, converted = convert_df_corona(counted_df)
     
@@ -279,7 +265,7 @@ def gekkepoep():
     
 
 if __name__ == '__main__':
-    # gekkepoep()
+    # weather()
     # number_of_EVs, number_of_EVs_end = run()
     plot_density()
 
