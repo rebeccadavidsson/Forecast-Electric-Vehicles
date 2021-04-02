@@ -174,7 +174,7 @@ def fit_testmodel(y, factor):
 
     exogx = np.df["wind"].reshape(-1,1)
 
-    model = ARIMA(differenced, order=(5, 0, 1), )
+    model = ARIMA(differenced, order=(5, 0, 1),exog=exogx )
     model_fit = model.fit()
     return model_fit
 
