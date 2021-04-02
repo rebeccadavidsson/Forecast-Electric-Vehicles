@@ -150,7 +150,7 @@ def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, fore
     negative = False
     if forecast:
         number_of_EVs, number_of_EVs_end = run(timestamp_start, timestamp_end)
-        number_of_EVs, number_of_EVs_end = round(number_of_EVs), number_of_EVs_end
+        # number_of_EVs, number_of_EVs_end = number_of_EVs, number_of_EVs_end
 
         if number_of_EVs_end > 0:
             negative = True
