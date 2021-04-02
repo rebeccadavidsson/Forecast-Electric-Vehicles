@@ -23,7 +23,7 @@ app = dash.Dash(
     url_base_pathname='/dash/'
 )
 
-section_df = pd.read_pickle("./results.p")
+section_df = pd.read_pickle("results.p")
 graph = px.bar(x=section_df.index, y=section_df.Count)
 graph.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
                 marker_line_width=1.5, opacity=0.6)
@@ -89,7 +89,11 @@ def plot_density(hour=15):
         xaxis_title="Session time in hours",
         yaxis_title="Probability",
     )
-    return plot(fig, auto_open=False, output_type='div')
+
+    scatter = px.scatter(x=df["Hour"], y=df["Means"])
+
+    return [plot(fig, auto_open=False, output_type='div'),
+        plot(scatter, auto_open=False, output_type='div')]
 
 
 def observed_data():
@@ -117,7 +121,7 @@ def observed_data():
 
 
 def main_plot():
-    section_df = pd.read_pickle("./results.p")
+    section_df = pd.read_pickle("results.p")
     graph = px.bar(x=section_df.index, y=section_df.Count)
     graph.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
                     marker_line_width=1.5, opacity=0.6)
@@ -142,7 +146,7 @@ def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, fore
     
     print(number_of_EVs, number_of_EVs_end)
     div = main_plot()
-    density_plot = plot_density(hour=timestamp_start.hour)
+    density_plot, scatter_plot = plot_density(hour=timestamp_start.hour)
     observed_plot = observed_data()
     return render_template('home.html', 
                             start_date=timestamp_start.strftime("%Y-%m-%d"),
@@ -153,6 +157,7 @@ def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, fore
                             number_of_EVs=number_of_EVs, 
                             number_of_EVs_end=number_of_EVs_end,
                             plot=div, 
+                            scatter_plot=scatter_plot,
                             observed_plot=observed_plot,
                             density_plot=density_plot)
 
