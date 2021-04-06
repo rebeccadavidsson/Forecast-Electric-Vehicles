@@ -148,42 +148,25 @@
             </section>
             <section class="grid">
                 <article id="observed">
-                    <h5 style="font-weight: 800;" class="inner_title">Observed Data</h5>
+                    <h4 style="font-weight: 800;" class="inner_title">Observed Data</h4>
                     {{ observed_plot|safe }}
                   </article>
-          
-              <article style="max-width:400px; height: inherit;">
-                  <div class="inner">
-                      <h4 style="font-weight: 800; padding-bottom: 0px;" class="inner_title" >Prediction</h4>
-                      {% if number_of_EVs ==  [] %}
-                        <button onclick="$('#loading').show();" type="submit" style="margin-left: 1.5em;" class="btn btn-light">Predict</button>
-
-                        {% else %}
-                        <div class="nr_WVs">
-                            <div>
-                                <p class="inner_title" style="padding-top: 0.4em; ">EVs charging at {{ start_date }}, {{ start_time }}:</p>
-                                <div class="center">
-                                    <h1 class="inner_title dot">{{ number_of_EVs }}</h1>
-                                </div>
-                            </div>
-                            <div>
-                                <p class="inner_title" style="padding-top: 0.4em;"></h5>New charging/discharging {{ start_date }}, {{ start_time }} and  {{ end_date }}, {{ end_time }}  </p>
-           
-                                <div class="center">
-                                    <h1 class="inner_title dot darkblue">
-                                      {% if negative %}
-                                        +
-                                      {% else %}
-                                        -
-                                      {% endif %}                                      
-                                      {{ number_of_EVs_end }}</h1>
-                                </div>
-                            </div>
-                         </div>
-                     
-                        {% endif %}
+                  <article id="main_plot">
+                  <div>
+                      <h4 style="font-weight: 800; padding-bottom: 0" class="inner_title">Future Predictions</h4>
+                      <p class="inner_title" style="padding-top: 5px; max-width: 12em;">We can see an increasing trendline in number of charging cars towards the end of 2023.</p>
                     </div>
+                    {{ plot|safe }}
+                </article>
+                {% if bar != [] %}
+              <article id="scatter_plot">
+                  <div class="inner" id="scatter_plot">
+                    {{ bar|safe }}
+                </div>
               </article>
+              {% endif %}
+          
+            
               <article id="density_plot">
                 <div class="inner" id="prob_dens">
                     <h4 class="inner_title" style="margin-bottom: 0.5em; padding-bottom: 0;">Probability curve of the charging session length at {{start_time}} </h4>
@@ -197,16 +180,8 @@
                   {{ scatter_plot|safe }}
               </div>
           </article>
-          <article id="scatter_plot">
-            <div class="inner" id="scatter_plot">
-              {{ bar|safe }}
-          </div>
-          </article>
           
-            <article id="main_plot">
-                <h4 style="font-weight: 800;" class="inner_title">Future Predictions</h4>
-                {{ plot|safe }}
-            </article>
+          
              
             </section>
             <footer class="page-footer">

@@ -19,6 +19,7 @@ from scipy.stats import norm
 from sklearn.neighbors import KernelDensity
 
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from statsmodels.tsa.arima_model import ARIMA
 from statsmodels.formula.api import ols
 from statsmodels.graphics import tsaplots
 
@@ -86,6 +87,8 @@ def prepare_dataset():
 
     # print(df.head(5))
     return df, total_rows, counted_df, mean_df
+
+
 
 def prepare_compact_dataset():
 
@@ -172,18 +175,20 @@ def inverse_difference(history, yhat, interval=1):
 
 
 def fit_model(y, factor):
-    series = y * factor
+
     # seasonal difference
-    X = series.values
+    X = y.values
     differenced = difference(X, days_in_year)
+    print(differenced)
     # fit model
-    model = SARIMAX(differenced, order=(5, 0, 1), seasonal_order=(0, 0, 0, 0))
-    model_fit = model.fit()
+    model = SARIMAX(differenced, order=(5, 0, 1))
+    model_fit = model.fit(transparams=False)
     return model_fit
 
 
-def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, print_results=False, future_steps=3000, plot=False):
-    future_steps = future_steps
+def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, 
+            print_results=False, future_steps=3000, plot=False):
+
     last_date = y.index[-1]
 
     X = y.values
@@ -238,26 +243,31 @@ def predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, pri
     return number_of_EVs.values[0], difference
     
 
-def run(timestamp_start, timestamp_end, convert_corona=True):
+def run_model(timestamp_start, timestamp_end, convert_corona=True):
     
-    print("Predicting...")
-    df, total_rows, counted_df, mean_df = prepare_dataset()
-    y = counted_df["timestamp_start"]
-    y_mean = mean_df["session_time"]
+    results_df = pd.read_pickle("app/static/predictions_timestamp_start.p")
+    number_of_EVs = results_df[results_df.index == timestamp_start][0]
+    number_of_EVs_end = results_df[results_df.index == timestamp_end][0]
+    difference = number_of_EVs_end.values[0] - number_of_EVs.values[0]
 
-    if convert_corona:
-        y, converted = convert_df_corona(counted_df)
-        y_mean, converted_mean = convert_df_corona(mean_df)
+    # print("Predicting...")
+    # df, total_rows, counted_df, mean_df = prepare_dataset()
+    # y = counted_df["timestamp_start"]
+    # y_mean = mean_df["session_time"]
 
-    factor = len(y) / total_rows
+    # if convert_corona:
+    #     y, converted = convert_df_corona(counted_df)
+    #     y_mean, converted_mean = convert_df_corona(mean_df)
+
+    # factor = len(y) / total_rows
     # model_fit = fit_model(y, factor)
     # model_fit_mean = fit_model(y_mean, factor)
-    model_fit, model_fit_mean = [], []
+    # # model_fit, model_fit_mean = [], []
 
-    number_of_EVs, number_of_EVs_end = predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, plot=False)
-    # number_of_EVs_, number_of_EVs_end_ = predict_future(y_mean, model_fit_mean, total_rows, timestamp_start, timestamp_end, plot=False)
+    # number_of_EVs, number_of_EVs_end = predict_future(y, model_fit, total_rows, timestamp_start, timestamp_end, plot=False)
+    # # number_of_EVs_, number_of_EVs_end_ = predict_future(y_mean, model_fit_mean, total_rows, timestamp_start, timestamp_end, plot=False)
 
-    return df, number_of_EVs, number_of_EVs_end
+    return results_df, number_of_EVs, number_of_EVs_end
 
 
 def weather():

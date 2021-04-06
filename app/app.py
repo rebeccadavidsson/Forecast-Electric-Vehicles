@@ -11,11 +11,11 @@ import numpy as np
 import matplotlib.pylab as plt
 import plotly.graph_objects as go
 from collections import Counter
-
+import datetime as dt
 try:
-    from .predict import run, prepare_compact_dataset
+    from .predict import run_model, prepare_compact_dataset
 except ImportError:
-    from predict import run, prepare_compact_dataset
+    from predict import run_model, prepare_compact_dataset
 
 START_DATE_TIME = pd.to_datetime('2021-02-01 14:00')
 
@@ -126,66 +126,89 @@ def plot_density(hour=15, day=None):
             plot(scatter, auto_open=False, output_type='div'), probability]
 
 
-def in_session(df, date=pd.to_datetime("2020-01-01"), start_time=0, end_time=24, mode='S', plotting=False):
+# def in_session(df, date=pd.to_datetime("2020-01-01"), start_time=0, end_time=24, mode='S', plotting=False):
 
-    # df =
-    print(date)
-    # def in_session(df, date, start_time=0, end_time=24, mode='S', plotting=False):
-    subset_start = df[(df[mode + "_Day_start"] == pd.to_datetime(date)) & (df[mode + "_Hour_start"] >= start_time)]
-    subset_end = df[(df[mode + "_Day_end"] == pd.to_datetime(date)) & (df[mode + "_Hour_end"] < end_time)]
-    continuous = df[(df[mode + "_Day_start"] < pd.to_datetime(date)) & (df[mode + "_Day_end"] > pd.to_datetime(date))]
+#     # df =
+#     print(date)
+#     # def in_session(df, date, start_time=0, end_time=24, mode='S', plotting=False):
+#     subset_start = df[(df[mode + "_Day_start"] == pd.to_datetime(date)) & (df[mode + "_Hour_start"] >= start_time)]
+#     subset_end = df[(df[mode + "_Day_end"] == pd.to_datetime(date)) & (df[mode + "_Hour_end"] < end_time)]
+#     continuous = df[(df[mode + "_Day_start"] < pd.to_datetime(date)) & (df[mode + "_Day_end"] > pd.to_datetime(date))]
    
-    subset_start = subset_start[mode + "_Hour_start"] 
-    subset_end = subset_end[mode + "_Hour_end"]
+#     subset_start = subset_start[mode + "_Hour_start"] 
+#     subset_end = subset_end[mode + "_Hour_end"]
 
-    in_session = []
-    in_out = []
-    for index, value in subset_end.iteritems():
-        if index not in subset_start:
-            in_session.extend(range(start_time, value))
-        if index in subset_start:
-            if value == subset_start[index]:
-                subset_start = subset_start.drop(index)
-                subset_end = subset_end.drop(index)
-                in_out.append(value)
+#     in_session = []
+#     in_out = []
+#     for index, value in subset_end.iteritems():
+#         if index not in subset_start:
+#             in_session.extend(range(start_time, value))
+#         if index in subset_start:
+#             if value == subset_start[index]:
+#                 subset_start = subset_start.drop(index)
+#                 subset_end = subset_end.drop(index)
+#                 in_out.append(value)
 
-    for index, value in subset_start.iteritems():
-        if index not in subset_end:
-            in_session.extend(range(value + 1, end_time))
-        if index in subset_end:
-            in_session.extend(range(value + 1, subset_end[index]))
+#     for index, value in subset_start.iteritems():
+#         if index not in subset_end:
+#             in_session.extend(range(value + 1, end_time))
+#         if index in subset_end:
+#             in_session.extend(range(value + 1, subset_end[index]))
 
-    in_session.extend(list(range(24)) * len(continuous))
+#     in_session.extend(list(range(24)) * len(continuous))
     
-    fig = go.Figure(layout_xaxis_range=[start_time - 0.5, end_time - 0.5], layout_yaxis_range=[0,500])
-    fig.add_trace(go.Histogram(x=subset_start, name="Plugging in", marker_color='green'))
-    fig.add_trace(go.Histogram(x=in_session, name="In session", marker_color='orange'))
-    fig.add_trace(go.Histogram(x=in_out, name="In-out", marker_color='grey'))
-    fig.add_trace(go.Histogram(x=subset_end, name="Plugging out", marker_color='crimson'))
-    fig.update_traces(xbins_size=1)
-    fig.update_xaxes(dtick=1)
+#     fig = go.Figure(layout_xaxis_range=[start_time - 0.5, end_time - 0.5], layout_yaxis_range=[0,500])
+#     fig.add_trace(go.Histogram(x=subset_start, name="Plugging in", marker_color='green'))
+#     fig.add_trace(go.Histogram(x=in_session, name="In session", marker_color='orange'))
+#     fig.add_trace(go.Histogram(x=in_out, name="In-out", marker_color='grey'))
+#     fig.add_trace(go.Histogram(x=subset_end, name="Plugging out", marker_color='crimson'))
+#     fig.update_traces(xbins_size=1)
+#     fig.update_xaxes(dtick=1)
 
-    fig.update_layout(barmode='stack', bargroupgap=0.1)
+#     fig.update_layout(barmode='stack', bargroupgap=0.1)
 
+#     fig.update_layout(
+#         margin=dict(l=50, r=40, t=40, b=60),
+#         autosize=True,
+#         width=900,
+#         height=300,
+#         showlegend=True,
+#         template='plotly_white',
+#         xaxis_title="Hour",
+#         yaxis_title="Number of cars",
+#     )
+    
+#     # plugging_in = dict(Counter(subset_start))
+#     # plugging_out = dict(Counter(subset_end))
+#     # in_session = dict(Counter(in_session))
+#     # in_out = dict(Counter(in_out))
+    
+#     return plot(fig, auto_open=False, output_type='div')
+    
+
+def sessions(time_start, time_end):
+    start_df = pd.read_pickle("app/static/predictions_timestamp_start.p")
+    end = pd.read_pickle("app/static/predictions_timestamp_end.p")
+    merged_df = pd.merge(start_df, end, left_index=True, right_index=True)
+    merged_df = merged_df.rename(columns={"0_y": "Starting", "0_x": "Ending" })
+    merged_section = merged_df[(merged_df.index >= time_start.floor("D") + dt.timedelta(hours=1) ) & (merged_df.index <= time_end.ceil("D"))]
+    merged_section = merged_section.reset_index()
+    merged_section["New"] = abs(merged_section["Starting"].diff())
+    merged_section["Leaving"] = abs(merged_section["Ending"].diff())
+    colors = ["green", 'orange', 'orange', 'red']
+    fig = px.bar(merged_section, x="index", y=["New", "Starting", 'Ending', "Leaving"],
+            barmode='stack')
     fig.update_layout(
-        margin=dict(l=50, r=40, t=40, b=60),
         autosize=True,
         width=900,
-        height=300,
+        height=400,
         showlegend=True,
         template='plotly_white',
-        xaxis_title="Hour",
+        xaxis_title="Time",
         yaxis_title="Number of cars",
+        title="Number of charging cars per day"
     )
-    
-    # plugging_in = dict(Counter(subset_start))
-    # plugging_out = dict(Counter(subset_end))
-    # in_session = dict(Counter(in_session))
-    # in_out = dict(Counter(in_out))
-    
     return plot(fig, auto_open=False, output_type='div')
-    
-
 
 
 def observed_data():
@@ -213,8 +236,10 @@ def observed_data():
 
 
 def main_plot():
-    section_df = pd.read_pickle("app/static/results.p")
-    graph = px.bar(x=section_df.index, y=section_df.Count)
+    section_df = pd.read_pickle("app/static/predictions_timestamp_start.p")
+
+    # graph = px.line(x=section_df.index, y=section_df[section_df.columns[0]])
+    graph = px.scatter(x=section_df.index, y=section_df[section_df.columns[0]], trendline="ols")
     graph.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)',
                     marker_line_width=1.5, opacity=0.6)
     graph.update_layout(
@@ -233,8 +258,8 @@ def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, fore
     negative = False
     session_plot = []
     if forecast:
-        df, number_of_EVs, number_of_EVs_end = run(timestamp_start, timestamp_end)
-        session_plot = in_session(df)
+        df, number_of_EVs, number_of_EVs_end = run_model(timestamp_start, timestamp_end)
+        session_plot = sessions(timestamp_start, timestamp_end)
         try:
             number_of_EVs, number_of_EVs_end = round(number_of_EVs[0]), round(number_of_EVs_end[0])
         except:
@@ -250,7 +275,8 @@ def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, fore
     density_plot, scatter_plot, prob = plot_density(hour=timestamp_start.hour, day=timestamp_start.dayofweek)
     observed_plot = observed_data()
 
-
+    # Temporary!
+    number_of_EVs_end = "-"
     return render_template('home.html', 
                             start_date=timestamp_start.strftime("%Y-%m-%d"),
                             end_date=timestamp_end.strftime("%Y-%m-%d"),
@@ -290,7 +316,7 @@ def run_app(host, port):
     server.run()
 
 if __name__ == '__main__':
-    server.run()
+    server.run(debug=True)
 
 
 
