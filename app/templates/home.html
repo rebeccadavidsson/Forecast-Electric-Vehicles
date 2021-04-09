@@ -154,7 +154,7 @@
                   <article id="main_plot">
                   <div>
                       <h4 style="font-weight: 800; padding-bottom: 0" class="inner_title">Future Predictions</h4>
-                      <p class="inner_title" style="padding-top: 5px; max-width: 12em;">We can see an increasing trendline in number of charging cars towards the end of 2023.</p>
+                      <p class="inner_title" style="padding-top: 5px; margin-left: 0.5em; max-width: 12em;">Increasing trendline in number of charging cars towards the end of 2023.</p>
                     </div>
                     {{ plot|safe }}
                 </article>
@@ -170,7 +170,7 @@
               <article id="density_plot">
                 <div class="inner" id="prob_dens">
                     <h4 class="inner_title" style="margin-bottom: 0.5em; padding-bottom: 0;">Probability curve of the charging session length at {{start_time}} </h4>
-                    <h6 class="inner_title" style="margin-top: 0; padding-top: 0;">Probability of that a vehicle connected at {{start_time}} stays connected for more than 4 hours:  %{{ prob }}</h6>
+                    <h6 class="inner_title" style="margin-top: 0; padding-top: 0; margin-left: 0.5em;">Probability of that a vehicle connected at {{start_time}} stays connected for more than 4 hours:  %{{ prob }}</h6>
                     {{ density_plot|safe }}
                 </div>
             </article>

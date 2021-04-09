@@ -126,81 +126,21 @@ def plot_density(hour=15, day=None):
             plot(scatter, auto_open=False, output_type='div'), probability]
 
 
-# def in_session(df, date=pd.to_datetime("2020-01-01"), start_time=0, end_time=24, mode='S', plotting=False):
-
-#     # df =
-#     print(date)
-#     # def in_session(df, date, start_time=0, end_time=24, mode='S', plotting=False):
-#     subset_start = df[(df[mode + "_Day_start"] == pd.to_datetime(date)) & (df[mode + "_Hour_start"] >= start_time)]
-#     subset_end = df[(df[mode + "_Day_end"] == pd.to_datetime(date)) & (df[mode + "_Hour_end"] < end_time)]
-#     continuous = df[(df[mode + "_Day_start"] < pd.to_datetime(date)) & (df[mode + "_Day_end"] > pd.to_datetime(date))]
-   
-#     subset_start = subset_start[mode + "_Hour_start"] 
-#     subset_end = subset_end[mode + "_Hour_end"]
-
-#     in_session = []
-#     in_out = []
-#     for index, value in subset_end.iteritems():
-#         if index not in subset_start:
-#             in_session.extend(range(start_time, value))
-#         if index in subset_start:
-#             if value == subset_start[index]:
-#                 subset_start = subset_start.drop(index)
-#                 subset_end = subset_end.drop(index)
-#                 in_out.append(value)
-
-#     for index, value in subset_start.iteritems():
-#         if index not in subset_end:
-#             in_session.extend(range(value + 1, end_time))
-#         if index in subset_end:
-#             in_session.extend(range(value + 1, subset_end[index]))
-
-#     in_session.extend(list(range(24)) * len(continuous))
-    
-#     fig = go.Figure(layout_xaxis_range=[start_time - 0.5, end_time - 0.5], layout_yaxis_range=[0,500])
-#     fig.add_trace(go.Histogram(x=subset_start, name="Plugging in", marker_color='green'))
-#     fig.add_trace(go.Histogram(x=in_session, name="In session", marker_color='orange'))
-#     fig.add_trace(go.Histogram(x=in_out, name="In-out", marker_color='grey'))
-#     fig.add_trace(go.Histogram(x=subset_end, name="Plugging out", marker_color='crimson'))
-#     fig.update_traces(xbins_size=1)
-#     fig.update_xaxes(dtick=1)
-
-#     fig.update_layout(barmode='stack', bargroupgap=0.1)
-
-#     fig.update_layout(
-#         margin=dict(l=50, r=40, t=40, b=60),
-#         autosize=True,
-#         width=900,
-#         height=300,
-#         showlegend=True,
-#         template='plotly_white',
-#         xaxis_title="Hour",
-#         yaxis_title="Number of cars",
-#     )
-    
-#     # plugging_in = dict(Counter(subset_start))
-#     # plugging_out = dict(Counter(subset_end))
-#     # in_session = dict(Counter(in_session))
-#     # in_out = dict(Counter(in_out))
-    
-#     return plot(fig, auto_open=False, output_type='div')
-    
-
 def sessions(time_start, time_end):
     start_df = pd.read_pickle("app/static/predictions_timestamp_start.p")
     end = pd.read_pickle("app/static/predictions_timestamp_end.p")
     merged_df = pd.merge(start_df, end, left_index=True, right_index=True)
-    merged_df = merged_df.rename(columns={"0_y": "Starting", "0_x": "Ending" })
+    merged_df = merged_df.rename(columns={"0_y": "Charging", "0_x": "Ending" })
     merged_section = merged_df[(merged_df.index >= time_start.floor("D") + dt.timedelta(hours=1) ) & (merged_df.index <= time_end.ceil("D"))]
     merged_section = merged_section.reset_index()
-    merged_section["New"] = abs(merged_section["Starting"].diff())
+    merged_section["New"] = abs(merged_section["Charging"].diff())
     merged_section["Leaving"] = abs(merged_section["Ending"].diff())
-    colors = ["green", 'orange', 'orange', 'red']
-    fig = px.bar(merged_section, x="index", y=["New", "Starting", 'Ending', "Leaving"],
+    colors = ["green", 'orange', 'red']
+    fig = px.bar(merged_section, x="index", y=["New", "Charging", "Leaving"],
             barmode='stack')
     fig.update_layout(
         autosize=True,
-        width=900,
+        width=1000,
         height=400,
         showlegend=True,
         template='plotly_white',
