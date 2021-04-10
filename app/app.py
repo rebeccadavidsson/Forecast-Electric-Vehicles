@@ -236,7 +236,6 @@ def predict(timestamp_start=START_DATE_TIME, timestamp_end=START_DATE_TIME, fore
 
 @server.route('/forecast/', methods=["POST", "GET"])
 def forecast():
-    # if request.method == 'GET':
 
     start_date, start_time = request.form.get("start_date_select"), request.form.get("start_time_select")
     end_date, end_time = request.form.get("end_date_select"), request.form.get("end_time_select")
@@ -252,8 +251,6 @@ def forecast():
     timestamp_end = pd.to_datetime(end_str)
     return predict(timestamp_start=timestamp_start, timestamp_end=timestamp_end, forecast=True)
 
-def run_app(host, port):
-    server.run()
 
 if __name__ == '__main__':
     server.run(debug=True)
